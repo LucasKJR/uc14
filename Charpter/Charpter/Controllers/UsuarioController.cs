@@ -1,8 +1,9 @@
-﻿using Charpter.Models;
-using Charpter.Repositories;
+﻿using Charpter.Interfaces;
 using Charpter.Models;
 using Charpter.Repositories;
-using Microsoft.AspNetCore.Authorization;
+using Charpter.Interfaces;
+using Charpter.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Charpter.Controllers
@@ -10,48 +11,43 @@ namespace Charpter.Controllers
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
-    public class LivroController : ControllerBase
+    public class UsuarioController : ControllerBase
     {
-        private readonly LivroRepository _livroRepository;
+        private readonly IUsuarioRepository _iUsuarioRepository;
 
-        public LivroController(LivroRepository livroRepository)
+        public UsuarioController(IUsuarioRepository iUsuarioRepsitory)
         {
-            _livroRepository = livroRepository;
+            _iUsuarioRepository = iUsuarioRepsitory;
         }
 
-
         [HttpGet]
-
-        public IActionResult ler()
+        public IActionResult listar()
         {
             try
             {
-                return Ok(_livroRepository.Listar());
+                return Ok(_iUsuarioRepository.Listar());
             }
             catch (Exception e)
             {
                 throw new Exception(e.Message);
             }
-
         }
+
 
         [HttpGet("{id}")]
         public IActionResult BuscarPorId(int id)
         {
-
-
             try
             {
 
-                Livro livroBuscado = _livroRepository.BuscarPorId(id);
+                Usuario usuarioEncontrado = _iUsuarioRepository.BuscarPorId(id);
 
-                if (livroBuscado == null)
+                if (usuarioEncontrado == null)
                 {
                     return NotFound("Não encontrado");
                 }
 
-                return Ok(livroBuscado);
+                return Ok(usuarioEncontrado);
             }
 
             catch (Exception e)
@@ -60,13 +56,12 @@ namespace Charpter.Controllers
             }
         }
 
-        [Authorize(Roles = "1")]
         [HttpPost]
-        public IActionResult Cadastrar(Livro l)
+        public IActionResult Cadastrar(Usuario usuario)
         {
             try
             {
-                _livroRepository.Cadastro(l);
+                _iUsuarioRepository.Cadastrar(usuario);
                 return StatusCode(201);
             }
             catch (Exception e)
@@ -80,8 +75,8 @@ namespace Charpter.Controllers
         {
             try
             {
-                _livroRepository.Deletar(id);
-                return Ok("Livro Removido com sucesso");
+                _iUsuarioRepository.Deletar(id);
+                return Ok("Usuário removido com sucesso");
             }
 
             catch (Exception e)
@@ -90,13 +85,12 @@ namespace Charpter.Controllers
             }
         }
 
-
         [HttpPut("{id}")]
-        public IActionResult Aterar(int id, Livro l)
+        public IActionResult Aterar(int id, Usuario usuario)
         {
             try
             {
-                _livroRepository.Alterar(id, l);
+                _iUsuarioRepository.Atualizar(id, usuario);
                 return StatusCode(204);
             }
 
@@ -104,9 +98,9 @@ namespace Charpter.Controllers
             {
                 throw new Exception(e.Message);
             }
-            //fim-12-12-22
+
+            //fim dia 13-12-22
 
         }
-
     }
 }
