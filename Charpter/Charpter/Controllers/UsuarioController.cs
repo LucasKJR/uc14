@@ -99,7 +99,6 @@ namespace Charpter.Controllers
                 throw new Exception(e.Message);
             }
 
-            //fim dia 13-12-22
 
         }
     }
